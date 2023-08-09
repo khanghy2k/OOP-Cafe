@@ -27,7 +27,7 @@ public class Program {
             System.out.println("Tính Năng");
             int choose = Integer.parseInt(scanner.nextLine());
             switch (choose) {
-                case 1:
+                case 1 -> {
                     System.out.println("Email :");
                     String email = scanner.nextLine();
                     System.out.println("Passowrd : ");
@@ -40,28 +40,25 @@ public class Program {
                     } else {
                         System.out.println("Sai mật khẩu hoặc tên đăng nhập");
                     }
-                    break;
-                case 2:
-                    System.exit(0);
-                    break;
-                default:
-                    System.out.println("Sai chức năng");
-                    break;
+                }
+                case 2 -> System.exit(0);
+                default -> System.out.println("Sai chức năng");
             }
         }
     }
 
     public static void loggedMenu(Scanner scanner, DataContext data) {
         while (currentUser != null) {
-            System.out.println("    Xin Chào   " + currentUser.getEmployeeName() + "  !  ");
-            System.out.println("1.Bàn");
-            System.out.println("2.Thanh Toán");
-            System.out.println("3.Chuyển Bàn");
-            System.out.println("4.Đăng Xuất");
-            System.out.println("Chọn chức Năng");
+            String welcomeMessage = "Xin Chào " + currentUser.getEmployeeName();
+            System.out.println(centerText(welcomeMessage, 80));
+            System.out.println(centerText("1. Bàn", 80));
+            System.out.println(centerText("2. Thanh Toán", 80));
+            System.out.println(centerText("3. Chuyển Bàn", 80));
+            System.out.println(centerText("4. Đăng Xuất", 80));
+            System.out.print("Chọn chức Năng: ");
             int choose = Integer.parseInt(scanner.nextLine());
             switch (choose) {
-                case 1:
+                case 1 -> {
                     System.out.println("Danh Sách Bàn");
                     for (Table t : data.getTableList()
                     ) {
@@ -120,10 +117,35 @@ public class Program {
                         table.setStatus(true);
                         table.addOrder(itemOrder);
                     }
-                    break;
-                case 2:
-                    break;
-                case 3:
+                }
+                case 2 -> {
+                    System.out.println("Danh Sách Bàn");
+                    for (Table t : data.getTableList()
+                    ) {
+                        System.out.println("Mã bàn: " + t.getTableId() + (t.isStatus() ? " Có Khách" : " Trống"));
+                    }
+                    System.out.println("Nhập Mã Bàn Thanh Toán");
+                    String tableId = scanner.nextLine();
+                    Table table1 = data.getTableList().stream().filter(
+                            x -> x.getTableId().equals(tableId)
+                    ).findFirst().orElse(null);
+                    if (table1 != null) {
+                        System.out.println("Danh Sách Orders");
+                        for (OrderDetail item : table1.getOrderDetails()
+                        ) {
+                            System.out.println(MessageFormat.format("{0}\t{1}\t{2}\t{3}\t{4}",
+                                    item.getProductId(), item.getProductName(), item.getQuantity(), item.getUnitPrice(),
+                                     (item.getUnitPrice() * item.getQuantity())));
+                        }
+
+                    } else {
+                        System.out.println("Mã bàn đã chọn chưa có khách");
+                        break;
+                    }
+                    table1.setStatus(false);
+                    table1.removeAll();
+                }
+                case 3 -> {
                     for (Table t : data.getTableList()
                     ) {
                         System.out.println("Mã bàn: " + t.getTableId() + (t.isStatus() ? " Có Khách" : " Trống"));
@@ -163,13 +185,15 @@ public class Program {
                     } else {
                         System.out.println("Bàn gốc không tồn tại.");
                     }
-                    break;
-                case 4:
-                    currentUser = null;
-                    break;
+                }
+                case 4 -> currentUser = null;
             }
 
         }
+    }
+    public static String centerText(String text, int totalWidth) {
+        int padding = (totalWidth - text.length()) / 2;
+        return String.format("%" + (padding + text.length()) + "s", text);
     }
 }
 
